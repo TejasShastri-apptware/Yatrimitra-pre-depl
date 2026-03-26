@@ -1,0 +1,50 @@
+services:
+  rtsp-server:
+    image: bluenviron/mediamtx:latest
+    container_name: rtsp-kit-server
+    ports:
+      - "8554:8554"
+    # healthcheck:
+    #   test: ["CMD", "nc", "-z", "localhost", "8554"]
+    #   interval: 5s
+    #   timeout: 3s
+    #   retries: 10
+    networks:
+      - rtsp-net
+
+  rtsp-publisher:
+    image: jrottenberg/ffmpeg
+    container_name: rtsp-kit-publisher
+    depends_on:
+      rtsp-server:
+        condition: service_started
+    volumes:
+      - ./data:/app
+    working_dir: /app
+    entrypoint: >
+      ffmpeg -re -stream_loop -1
+      -i sample.mp4
+      -c copy -f rtsp
+      rtsp://rtsp-server:8554/mystream
+    restart: on-failure
+    networks:
+      - rtsp-net
+
+  rtsp-app:
+    build: .
+    container_name: rtsp-kit-app
+    depends_on:
+      rtsp-server:
+        condition: service_started
+      rtsp-publisher:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    environment:
+      - RTSP_URL=rtsp://rtsp-server:8554/mystream
+    networks:
+      - rtsp-net
+
+networks:
+  rtsp-net:
+    driver: bridge
