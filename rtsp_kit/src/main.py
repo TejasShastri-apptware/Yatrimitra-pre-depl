@@ -2,6 +2,7 @@ import os
 import time
 import logging
 import cv2
+from urllib.parse import urlparse
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from .stream_handler import StreamHandler, ensure_rtsp_ffmpeg_options
@@ -30,7 +31,17 @@ def _mjpeg_generator(rtsp_url: str, fps: float):
     handler = StreamHandler(rtsp_url)
     
     if not handler.open():
-        logger.error(f"MJPEG: Could not open stream {rtsp_url}. Error: {handler.last_open_error}")
+        error_msg = f"MJPEG: Could not open stream {rtsp_url}. Error: {handler.last_open_error}"
+        logger.error(error_msg)
+        
+        # Specific help for common Docker pitfalls
+        parsed_url = urlparse(rtsp_url)
+        if parsed_url.hostname in ("localhost", "127.0.0.1"):
+            logger.warning(
+                "NOTE: You are using 'localhost' or '127.0.0.1' in a Dockerized environment. "
+                "This refers to the container itself. If you want to access the internal RTSP server, "
+                "try using 'rtsp-server' instead of 'localhost'."
+            )
         return
 
     min_interval = 1.0 / max(fps, 1.0)

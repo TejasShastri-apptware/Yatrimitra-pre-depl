@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import type { Camera, FloorPlanElement, Point, Room } from '../types/floorplan';
-import { drawGrid, drawRoom, drawDoor,drawWindow, drawCamera,  drawWall, drawPencilPath, drawTextBlock,} from '../utils/drawing';
+import { drawGrid, drawRoom, drawDoor, drawWindow, drawCamera, drawWall, drawPencilPath, drawTextBlock, } from '../utils/drawing';
 import { COLORS, MIN_ZOOM, MAX_ZOOM, ZOOM_STEP } from '../utils/constants';
 
 interface StreamModalProps {
@@ -75,7 +75,7 @@ function StreamModal({ camera, roomName, onClose }: StreamModalProps) {
 
                             <div className="flex flex-col items-center justify-center h-full">
                                 {camera.rtspUrl ? (
-                                    <img 
+                                    <img
                                         src={`http://localhost:8000/api/stream?url=${encodeURIComponent(camera.rtspUrl)}&fps=15`}
                                         alt="Live Feed"
                                         className="w-full h-full object-contain"
@@ -124,7 +124,7 @@ interface ViewCanvasProps {
     setHoveredCameraId: (id: string | null) => void;
 }
 
-function ViewCanvas({elements,zoom,panOffset,setPanOffset,onZoomChange,onCameraClick,
+function ViewCanvas({ elements, zoom, panOffset, setPanOffset, onZoomChange, onCameraClick,
     hoveredCameraId,
     setHoveredCameraId,
 }: ViewCanvasProps) {

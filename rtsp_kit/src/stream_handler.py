@@ -69,6 +69,11 @@ class StreamHandler:
                 hints.append(f"ffprobe unavailable during probe: {exc}")
 
         if parsed.scheme.lower() == "rtsp":
+            hostname = parsed.hostname
+            if hostname in ("localhost", "127.0.0.1"):
+                hints.append(
+                    "Try using 'rtsp-server' instead of 'localhost' if connecting to the internal MediaMTX service"
+                )
             hints.append(
                 "common causes: wrong RTSP path, stream publisher not running, authentication mismatch, or server exposing a different mount name"
             )

@@ -275,6 +275,9 @@ export function PropertiesPanel({ selectedElement, onUpdateElement }: Properties
         placeholder="rtsp://..."
         className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
       />
+      <p className="text-[10px] text-slate-500 mt-1">
+        Use <span className="text-blue-400">rtsp://rtsp-server:8554/mystream</span> for the internal test stream.
+      </p>
     </div>
     </>
           )}
